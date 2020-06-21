@@ -290,7 +290,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"DismissibleList/Preview Content\"";
-				DEVELOPMENT_TEAM = SQ97LFXQ38;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = DismissibleList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -310,7 +310,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"DismissibleList/Preview Content\"";
-				DEVELOPMENT_TEAM = SQ97LFXQ38;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = DismissibleList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
