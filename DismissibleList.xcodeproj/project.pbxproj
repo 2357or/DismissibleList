@@ -9,21 +9,23 @@
 /* Begin PBXBuildFile section */
 		761B84F6249F4D86004D99A3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761B84F5249F4D86004D99A3 /* AppDelegate.swift */; };
 		761B84F8249F4D86004D99A3 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761B84F7249F4D86004D99A3 /* SceneDelegate.swift */; };
-		761B84FA249F4D86004D99A3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761B84F9249F4D86004D99A3 /* ContentView.swift */; };
 		761B84FC249F4D8D004D99A3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 761B84FB249F4D8D004D99A3 /* Assets.xcassets */; };
 		761B84FF249F4D8D004D99A3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 761B84FE249F4D8D004D99A3 /* Preview Assets.xcassets */; };
 		761B8502249F4D8D004D99A3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 761B8500249F4D8D004D99A3 /* LaunchScreen.storyboard */; };
+		761B850B249F5458004D99A3 /* DismissibleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761B850A249F5457004D99A3 /* DismissibleCard.swift */; };
+		76D3477A249F8C1D00C7B8D9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76D34779249F8C1D00C7B8D9 /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		761B84F2249F4D86004D99A3 /* DismissibleList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DismissibleList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		761B84F5249F4D86004D99A3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		761B84F7249F4D86004D99A3 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		761B84F9249F4D86004D99A3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		761B84FB249F4D8D004D99A3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		761B84FE249F4D8D004D99A3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		761B8501249F4D8D004D99A3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		761B8503249F4D8D004D99A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		761B850A249F5457004D99A3 /* DismissibleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissibleCard.swift; sourceTree = "<group>"; };
+		76D34779249F8C1D00C7B8D9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,11 +60,12 @@
 			children = (
 				761B84F5249F4D86004D99A3 /* AppDelegate.swift */,
 				761B84F7249F4D86004D99A3 /* SceneDelegate.swift */,
-				761B84F9249F4D86004D99A3 /* ContentView.swift */,
 				761B84FB249F4D8D004D99A3 /* Assets.xcassets */,
 				761B8500249F4D8D004D99A3 /* LaunchScreen.storyboard */,
 				761B8503249F4D8D004D99A3 /* Info.plist */,
 				761B84FD249F4D8D004D99A3 /* Preview Content */,
+				761B850A249F5457004D99A3 /* DismissibleCard.swift */,
+				76D34779249F8C1D00C7B8D9 /* ContentView.swift */,
 			);
 			path = DismissibleList;
 			sourceTree = "<group>";
@@ -148,7 +151,8 @@
 			files = (
 				761B84F6249F4D86004D99A3 /* AppDelegate.swift in Sources */,
 				761B84F8249F4D86004D99A3 /* SceneDelegate.swift in Sources */,
-				761B84FA249F4D86004D99A3 /* ContentView.swift in Sources */,
+				76D3477A249F8C1D00C7B8D9 /* ContentView.swift in Sources */,
+				761B850B249F5458004D99A3 /* DismissibleCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
