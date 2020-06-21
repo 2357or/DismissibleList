@@ -23,6 +23,8 @@ struct DismissibleCard: View {
     
     @State var delete: Bool = false
     
+    @State var draging: Bool = false
+    
     var body: some View {
         ZStack {
             // 色の部分
@@ -31,6 +33,7 @@ struct DismissibleCard: View {
                     .fill(Color.green)
                 Rectangle()
                     .fill(Color.blue)
+                    .shadow(color: .gray, radius: 0, x: 0, y: draging ? 5 : 3)
                 Rectangle()
                     .fill(Color.red)
             }
@@ -54,7 +57,7 @@ struct DismissibleCard: View {
                     .scaleEffect(rtl ? 1 : 0.5)
                     .padding(.trailing, rtl ? height/3 : 1)
             }
-            .frame(width: width, height: height/1.8)
+            .frame(width: width, height: height/2)
             .position(x: width/2, y: height/2)
         }
     }
@@ -66,9 +69,11 @@ struct DismissibleCard: View {
                 self.CenterPos = self.width/2 + value.translation.width
                 self.ltr = self.CenterPos > self.width/2 + self.height
                 self.rtl = self.CenterPos < self.width/2 - self.height
+                self.draging = true
         }
         .onEnded { value in
             self.CenterPos = self.judge()
+            self.draging = false
         }
     }
     
@@ -78,18 +83,23 @@ struct DismissibleCard: View {
             return width/2
         }else if ltr{
             Action(mode: ltrMode) { ltrAction() }
-            return ltrMode == DismissibleMode.none ? width/2 : 3 * width/2
+            return 3 * width/2
         }
         Action(mode: rtlMode) { rtlAction() }
-        return rtlMode == DismissibleMode.none ? width/2 : width/2 * -1
+        return width/2 * -1
     }
-   
+    
     // 遅延処理
     func Action(mode: DismissibleMode, action: ()-> Void) {
         action()
         if mode == DismissibleMode.delete{
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.delete = true
+            }
+        }
+        if mode == DismissibleMode.none{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.CenterPos = self.width/2
             }
         }
     }
