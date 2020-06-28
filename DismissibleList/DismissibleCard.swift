@@ -46,7 +46,6 @@ struct DismissibleCard: View {
                     .padding(.trailing, offset < -1*sensitivity ? sensitivity/3 : 5)
             }
             .frame(width: width, height: delete ? 0 : height/2)
-            .animation(.default)
             .position(x: width/2, y: height/2)
             
             
