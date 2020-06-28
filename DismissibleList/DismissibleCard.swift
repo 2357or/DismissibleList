@@ -8,6 +8,8 @@ enum DismissibleMode {
 
 struct DismissibleCard: View {
     let width: CGFloat = UIScreen.main.bounds.size.width
+    let sensitivity: CGFloat = 60
+    
     let height: CGFloat
     let ltrAction: ()->Void
     let rtlAction: ()->Void
@@ -34,22 +36,24 @@ struct DismissibleCard: View {
                 Image(systemName: CenterPos > width/2 + height/2 && !delete ? "paperplane" : "")
                     .resizable()
                     .scaledToFit()
-                    .scaleEffect(offset > 100 ? 1 : 0.8)
-                    .padding(.leading, offset > 100 ? height/3 : 1)
+                    .scaleEffect(offset > sensitivity ? 1 : 0.8)
+                    .padding(.leading, offset > sensitivity ? sensitivity/3 : 5)
                 Spacer()
                 Image(systemName: CenterPos < width/2 - height/2 && !delete ? "trash" : "")
                     .resizable()
                     .scaledToFit()
-                    .scaleEffect(offset < -100 ? 1 : 0.8)
-                    .padding(.trailing, offset < -100 ? height/3 : 1)
+                    .scaleEffect(offset < -1*sensitivity ? 1 : 0.8)
+                    .padding(.trailing, offset < -1*sensitivity ? sensitivity/3 : 5)
             }
-            .frame(width: width, height: height/2)
+            .frame(width: width, height: delete ? 0 : height/2)
+            .animation(.default)
             .position(x: width/2, y: height/2)
+            
             
             Rectangle()
                 .fill(Color.blue)
                 .shadow(color: .gray, radius: 0, x: 0, y: offset==0 ? 5 : 3)
-                .frame(width: width-10, height: delete ? 0 : height )
+                .frame(width: width-10, height: height )
                 .position(x: CenterPos, y: height/2)
                 .gesture(self.drag)
                 .animation(.default)
@@ -85,11 +89,11 @@ struct DismissibleCard: View {
     
     // 左右への移動具合から、Cardの最終位置を決定して返す
     func judge() -> CGFloat {
-        if offset < -100 {
+        if offset < -1*sensitivity {
             Action(mode: rtlMode) { rtlAction() }
             return width/2 * -1
         }
-        if offset > 100 {
+        if offset > sensitivity {
             Action(mode: ltrMode) { ltrAction() }
             return 3 * width/2
         }
@@ -121,7 +125,7 @@ struct Card_Previews: PreviewProvider {
                 ltrAction: {print("ltr")},
                 rtlAction: {print("rtl")},
                 ltrMode: .none,
-                rtlMode: .none
+                rtlMode: .delete
             ).padding(.top)
         }
     }
