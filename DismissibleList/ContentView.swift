@@ -3,8 +3,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         GeometryReader{ geometry in
-            DismissibleCard(CenterPos: geometry.size.width/2,
-                 width: geometry.size.width,
+            DismissibleCard(
                  height: geometry.size.height/10,
                  ltrAction: {print("left to right")},
                  rtlAction: {print("right to left")},

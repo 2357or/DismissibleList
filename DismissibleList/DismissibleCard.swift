@@ -7,58 +7,65 @@ enum DismissibleMode {
 }
 
 struct DismissibleCard: View {
-    @State var CenterPos: CGFloat
+    let width: CGFloat = UIScreen.main.bounds.size.width
+    let height: CGFloat
+    let ltrAction: ()->Void
+    let rtlAction: ()->Void
     
-    var width: CGFloat
-    var height: CGFloat
+    let ltrMode: DismissibleMode
+    let rtlMode: DismissibleMode
     
-    var ltrAction: ()->Void
-    var rtlAction: ()->Void
-    
-    var ltrMode: DismissibleMode
-    var rtlMode: DismissibleMode
-    
-    @State var rtl: Bool = false
-    @State var ltr: Bool = false
+    @State var CenterPos: CGFloat = UIScreen.main.bounds.size.width/2
+    @State var offset: CGFloat = 0
     
     @State var delete: Bool = false
-    
-    @State var draging: Bool = false
+
+    @State var color: Color = Color(red: 1, green: 1, blue: 1, opacity: 0)
     
     var body: some View {
         ZStack {
-            // 色の部分
-            HStack(spacing: 0) {
-                Rectangle()
-                    .fill(Color.green)
-                Rectangle()
-                    .fill(Color.blue)
-                    .shadow(color: .gray, radius: 0, x: 0, y: draging ? 5 : 3)
-                Rectangle()
-                    .fill(Color.red)
-            }
-            .frame(width: width*3, height: delete ? 0 : height )
-            .position(x: CenterPos, y: height/2)
-            .gesture(self.drag)
-            .animation(.default)
+            Rectangle()
+                .fill(color)
+                .frame(width: width, height: height)
+                .position(x: width/2, y: height/2)
+                .animation(.easeOut)
 
-            
-            // アイコン
             HStack {
                 Image(systemName: CenterPos > width/2 + height/2 && !delete ? "paperplane" : "")
                     .resizable()
                     .scaledToFit()
-                    .scaleEffect(ltr ? 1 : 0.5)
-                    .padding(.leading, ltr ? height/3 : 1)
+                    .scaleEffect(offset > 100 ? 1 : 0.8)
+                    .padding(.leading, offset > 100 ? height/3 : 1)
                 Spacer()
                 Image(systemName: CenterPos < width/2 - height/2 && !delete ? "trash" : "")
                     .resizable()
                     .scaledToFit()
-                    .scaleEffect(rtl ? 1 : 0.5)
-                    .padding(.trailing, rtl ? height/3 : 1)
+                    .scaleEffect(offset < -100 ? 1 : 0.8)
+                    .padding(.trailing, offset < -100 ? height/3 : 1)
             }
             .frame(width: width, height: height/2)
             .position(x: width/2, y: height/2)
+            
+            Rectangle()
+                .fill(Color.blue)
+                .shadow(color: .gray, radius: 0, x: 0, y: offset==0 ? 5 : 3)
+                .frame(width: width-10, height: delete ? 0 : height )
+                .position(x: CenterPos, y: height/2)
+                .gesture(self.drag)
+                .animation(.default)
+        }
+    }
+    
+    func changeColor() {
+        if self.offset < 0 {
+            self.color = .red
+        }else {
+            self.color = .green
+        }
+    }
+    func resetColor() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.color = Color(red: 1, green: 1, blue: 1, opacity: 0)
         }
     }
     
@@ -66,27 +73,27 @@ struct DismissibleCard: View {
     var drag: some Gesture {
         DragGesture()
             .onChanged { value in
+                self.changeColor()
+                self.offset = value.translation.width
                 self.CenterPos = self.width/2 + value.translation.width
-                self.ltr = self.CenterPos > self.width/2 + self.height
-                self.rtl = self.CenterPos < self.width/2 - self.height
-                self.draging = true
         }
         .onEnded { value in
+            self.resetColor()
             self.CenterPos = self.judge()
-            self.draging = false
         }
     }
     
     // 左右への移動具合から、Cardの最終位置を決定して返す
     func judge() -> CGFloat {
-        if !(ltr || rtl){
-            return width/2
-        }else if ltr{
+        if offset < -100 {
+            Action(mode: rtlMode) { rtlAction() }
+            return width/2 * -1
+        }
+        if offset > 100 {
             Action(mode: ltrMode) { ltrAction() }
             return 3 * width/2
         }
-        Action(mode: rtlMode) { rtlAction() }
-        return width/2 * -1
+        return width/2
     }
     
     // 遅延処理
@@ -102,19 +109,19 @@ struct DismissibleCard: View {
                 self.CenterPos = self.width/2
             }
         }
+        
     }
 }
 
 struct Card_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader{ geometry in
-            DismissibleCard(CenterPos: geometry.size.width/2,
-                 width: geometry.size.width,
-                 height: geometry.size.height/10,
-                 ltrAction: {print("ltr")},
-                 rtlAction: {print("rtl")},
-                 ltrMode: .none,
-                 rtlMode: .delete
+            DismissibleCard(
+                height: 60,
+                ltrAction: {print("ltr")},
+                rtlAction: {print("rtl")},
+                ltrMode: .none,
+                rtlMode: .none
             ).padding(.top)
         }
     }
