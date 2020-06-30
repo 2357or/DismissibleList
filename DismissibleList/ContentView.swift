@@ -7,6 +7,7 @@ struct ContentView: View {
                  height: geometry.size.height/10,
                  ltrAction: {print("left to right")},
                  rtlAction: {print("right to left")},
+                 onTap: {print("tapped")},
                  ltrMode: .none,
                  rtlMode: .delete
             ).padding(.top)

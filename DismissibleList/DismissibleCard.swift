@@ -8,11 +8,11 @@ enum DismissibleMode {
 
 struct DismissibleCard: View {
     let width: CGFloat = UIScreen.main.bounds.size.width
-    let sensitivity: CGFloat = 60
-    
+    let sensitivity: CGFloat = 80
+  
     let height: CGFloat
-    let ltrAction: ()->Void
-    let rtlAction: ()->Void
+    
+    var ltrAction, rtlAction, onTap: ()->Void
     
     let ltrMode: DismissibleMode
     let rtlMode: DismissibleMode
@@ -21,54 +21,71 @@ struct DismissibleCard: View {
     @State var offset: CGFloat = 0
     
     @State var delete: Bool = false
-
-    @State var color: Color = Color(red: 1, green: 1, blue: 1, opacity: 0)
     
+    @State var backColor: Color = Color(red: 1, green: 1, blue: 1, opacity: 0)
+
     var body: some View {
         ZStack {
-            Rectangle()
-                .fill(color)
-                .frame(width: width, height: height)
-                .position(x: width/2, y: height/2)
-                .animation(.easeOut)
-
-            HStack {
-                Image(systemName: CenterPos > width/2 + height/2 && !delete ? "paperplane" : "")
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(offset > sensitivity ? 1 : 0.8)
-                    .padding(.leading, offset > sensitivity ? sensitivity/3 : 5)
-                Spacer()
-                Image(systemName: CenterPos < width/2 - height/2 && !delete ? "trash" : "")
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(offset < -1*sensitivity ? 1 : 0.8)
-                    .padding(.trailing, offset < -1*sensitivity ? sensitivity/3 : 5)
+            // 背景
+            Group {
+                // 背景色
+                Rectangle()
+                    .fill(backColor)
+                    .animation(.easeOut)
+                    
+                // 左右のアイテムイメージ
+                HStack {
+                    Image(systemName: (CenterPos > width/2 + height/2) && (!delete) ? "paperplane" : "")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: height/2)
+                        .scaleEffect(offset > sensitivity ? 1 : 0.6)
+                        .padding(.leading, 20)
+                    Spacer()
+                    Image(systemName: (CenterPos < width/2 - height/2) && (!delete) ? "trash" : "")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: height/2)
+                        .scaleEffect(offset < -1*sensitivity ? 1 : 0.6)
+                        .padding(.trailing, 20)
+                }
+            }.position(x: width/2, y: height)
+            
+            // カード
+            ZStack {
+                // カードの影
+                Rectangle()
+                    .fill(Color(red: 1, green: 1, blue: 1, opacity: 1))
+                    .cornerRadius(offset==0 ? 0 : 15)
+                    .shadow(color: .gray, radius: 0, x: 0, y: offset==0 ? 2 : 5)
+                
+                // カードフィールド
+                Rectangle()
+                    .fill(Color.blue)
+                    .cornerRadius(offset==0 ? 0 : 15)
+                    .frame(width: width)
+                    .onTapGesture {self.onTap()}
             }
-            .frame(width: width, height: delete ? 0 : height/2)
-            .position(x: width/2, y: height/2)
-            
-            
-            Rectangle()
-                .fill(Color.blue)
-                .shadow(color: .gray, radius: 0, x: 0, y: offset==0 ? 5 : 3)
-                .frame(width: width-10, height: height )
-                .position(x: CenterPos, y: height/2)
-                .gesture(self.drag)
-                .animation(.default)
+            .position(x: CenterPos, y: height)
+            .gesture(self.drag)
+            .animation(.easeOut)
         }
+        .position(x: width/2, y: 0)
+        .frame(width: width, height: delete ? 0 : height)
     }
     
+    // 背景色の変更
     func changeColor() {
         if self.offset < 0 {
-            self.color = .red
+            self.backColor = .red
         }else {
-            self.color = .green
+            self.backColor = .green
         }
     }
+    // 背景色のリセット(透明化)
     func resetColor() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.color = Color(red: 1, green: 1, blue: 1, opacity: 0)
+            self.backColor = Color(red: 1, green: 1, blue: 1, opacity: 0)
         }
     }
     
@@ -81,51 +98,58 @@ struct DismissibleCard: View {
                 self.CenterPos = self.width/2 + value.translation.width
         }
         .onEnded { value in
-            self.resetColor()
-            self.CenterPos = self.judge()
+            self.judge()
         }
     }
     
     // 左右への移動具合から、Cardの最終位置を決定して返す
-    func judge() -> CGFloat {
+    func judge(){
         if offset < -1*sensitivity {
-            Action(mode: rtlMode) { rtlAction() }
-            return width/2 * -1
+            LazyAction(mode: rtlMode) { rtlAction() }
+            self.CenterPos = width/2 * -1
         }
-        if offset > sensitivity {
-            Action(mode: ltrMode) { ltrAction() }
-            return 3 * width/2
+        else if offset > sensitivity {
+            LazyAction(mode: ltrMode) { ltrAction() }
+            self.CenterPos = 3 * width/2
         }
-        return width/2
+        else {
+            self.CenterPos = width/2
+        }
     }
     
     // 遅延処理
-    func Action(mode: DismissibleMode, action: ()-> Void) {
+    func LazyAction(mode: DismissibleMode, action: ()-> Void) {
         action()
-        if mode == DismissibleMode.delete{
+        
+        switch mode {
+        case .delete:
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.resetColor()
                 self.delete = true
+                self.offset = 0
             }
-        }
-        if mode == DismissibleMode.none{
+        case .none:
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.resetColor()
+                self.offset = 0
                 self.CenterPos = self.width/2
             }
+        case .keep:
+            return
         }
-        
     }
 }
 
-struct Card_Previews: PreviewProvider {
+
+struct DismissibleCard_Previews: PreviewProvider {
     static var previews: some View {
-        GeometryReader{ geometry in
-            DismissibleCard(
-                height: 60,
-                ltrAction: {print("ltr")},
-                rtlAction: {print("rtl")},
-                ltrMode: .none,
-                rtlMode: .delete
-            ).padding(.top)
-        }
+        DismissibleCard(
+            height: 80,
+            ltrAction: {print("ltr")},
+            rtlAction: {print("rtl")},
+            onTap: {print("taped")},
+            ltrMode: .none,
+            rtlMode: .keep
+        )
     }
 }
