@@ -3,7 +3,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         ScrollView{
-            ForEach(0..<10){ num in
+            ForEach(0..<15){ num in
                 DismissibleCard(
                     height: 80,
                     ltrAction: {print("left to right")},
@@ -12,7 +12,7 @@ struct ContentView: View {
                     ltrMode: .none,
                     rtlMode: .delete,
                     text: "Test Data \(num)"
-                ).padding(-5)
+                ).padding(.vertical, -5)
             }
         }
     }

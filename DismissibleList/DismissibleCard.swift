@@ -10,7 +10,7 @@ struct DismissibleCard: View {
     let width: CGFloat = UIScreen.main.bounds.size.width
     let sensitivity: CGFloat = 80
   
-    let height: CGFloat
+    @State var height: CGFloat
     
     var ltrAction, rtlAction, onTap: ()->Void
     
@@ -21,9 +21,6 @@ struct DismissibleCard: View {
     
     @State var CenterPos: CGFloat = UIScreen.main.bounds.size.width/2
     @State var offset: CGFloat = 0
-    
-    @State var delete: Bool = false
-    
     @State var backColor: Color = Color(red: 1, green: 1, blue: 1, opacity: 0)
 
     var body: some View {
@@ -37,14 +34,14 @@ struct DismissibleCard: View {
                     
                 // 左右のアイテムイメージ
                 HStack {
-                    Image(systemName: (CenterPos > width/2 + height/2) && (!delete) ? "paperplane" : "")
+                    Image(systemName: (CenterPos > width/2 + height/2) ? "paperplane" : "")
                         .resizable()
                         .scaledToFit()
                         .frame(height: height/2)
                         .scaleEffect(offset > sensitivity ? 1 : 0.6)
                         .padding(.leading, 20)
                     Spacer()
-                    Image(systemName: (CenterPos < width/2 - height/2) && (!delete) ? "trash" : "")
+                    Image(systemName:(CenterPos < width/2 - height/2) ? "trash" : "")
                         .resizable()
                         .scaledToFit()
                         .frame(height: height/2)
@@ -66,26 +63,26 @@ struct DismissibleCard: View {
                     .fill(Color.blue)
                     .cornerRadius(offset==0 ? 0 : 15)
                     .frame(width: width)
-                    .border(Color.black, width: 2)
+                    .border(Color.black, width: offset==0 ? 2 : 0)
                     .onTapGesture {self.onTap()}
                 
                 // テキスト
-                Text(text).font(.system(size: height/2))
+                Text(text).font(.system(size: height/3))
             }
             .position(x: CenterPos, y: height)
             .gesture(self.drag)
             .animation(.easeOut)
         }
         .position(x: width/2, y: 0)
-        .frame(width: width, height: delete ? 0 : height)
+        .frame(width: width, height: height)
     }
     
     // 背景色の変更
     func changeColor() {
         if self.offset < 0 {
-            self.backColor = .red
+            backColor = .red
         }else {
-            self.backColor = .green
+            backColor = .green
         }
     }
     // 背景色のリセット(透明化)
@@ -112,14 +109,15 @@ struct DismissibleCard: View {
     func judge(){
         if offset < -1*sensitivity {
             LazyAction(mode: rtlMode) { rtlAction() }
-            self.CenterPos = width/2 * -1
+            CenterPos = width/2 * -1
         }
         else if offset > sensitivity {
             LazyAction(mode: ltrMode) { ltrAction() }
-            self.CenterPos = 3 * width/2
+            CenterPos = 3 * width/2
         }
         else {
-            self.CenterPos = width/2
+            offset = 0
+            CenterPos = width/2
         }
     }
     
@@ -131,8 +129,8 @@ struct DismissibleCard: View {
         case .delete:
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.resetColor()
-                self.delete = true
                 self.offset = 0
+                self.onDelete()
             }
         case .none:
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -143,6 +141,10 @@ struct DismissibleCard: View {
         case .keep:
             return
         }
+    }
+    
+    func onDelete() {
+        height = 0
     }
 }
 
