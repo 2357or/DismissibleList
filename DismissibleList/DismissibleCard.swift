@@ -143,6 +143,7 @@ struct DismissibleCard: View {
         }
     }
     
+    // 削除処理
     func onDelete() {
         height = 0
     }
