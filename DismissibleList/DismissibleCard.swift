@@ -17,6 +17,8 @@ struct DismissibleCard: View {
     let ltrMode: DismissibleMode
     let rtlMode: DismissibleMode
     
+    let text: String
+    
     @State var CenterPos: CGFloat = UIScreen.main.bounds.size.width/2
     @State var offset: CGFloat = 0
     
@@ -64,7 +66,11 @@ struct DismissibleCard: View {
                     .fill(Color.blue)
                     .cornerRadius(offset==0 ? 0 : 15)
                     .frame(width: width)
+                    .border(Color.black, width: 2)
                     .onTapGesture {self.onTap()}
+                
+                // テキスト
+                Text(text).font(.system(size: height/2))
             }
             .position(x: CenterPos, y: height)
             .gesture(self.drag)
@@ -149,7 +155,8 @@ struct DismissibleCard_Previews: PreviewProvider {
             rtlAction: {print("rtl")},
             onTap: {print("taped")},
             ltrMode: .none,
-            rtlMode: .keep
+            rtlMode: .keep,
+            text: "Test Data"
         )
     }
 }
