@@ -94,7 +94,7 @@ struct DismissibleCard: View {
     
     // Cardの移動処理
     var drag: some Gesture {
-        DragGesture()
+        DragGesture(minimumDistance: 20, coordinateSpace: .local)
             .onChanged { value in
                 self.changeColor()
                 self.offset = value.translation.width
